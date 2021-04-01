@@ -1,0 +1,47 @@
+.historyTable {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #d8d8d8;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 10px -5px #cccccc;
+}
+.tableHeader {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(125px, 14%));
+    border-bottom: 1px solid #d8d8d8;
+}
+.headerCell {
+    display: flex;
+    padding: 10px;
+    color: #333333;
+    font-size: 14px;
+}
+.headerCellActive {
+    color: #149AC9;
+}
+.headerCellText {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+.headerCellText:hover {
+    cursor: pointer;
+}
+.headerCell:not(.lastCell) {
+    border-right: 1px solid #d8d8d8;
+}
+.sortButton {
+    display: inline-flex;
+    padding: 0 10px;
+    color: #149AC9;
+}
+.sortAsc {
+    transform: rotate(180deg);
+}
+.sortDesc {
+    transform: rotate(0);
+}
+

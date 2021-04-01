@@ -1,0 +1,13 @@
+.orderHistoryRow {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(125px, 14%));
+}
+.cell {
+    padding: 10px;
+    color: #333333;
+    font-size: 13px;
+    overflow-wrap: break-word;
+}
+.cell:not(.lastCell) {
+    border-right: 1px solid #d8d8d8;
+}
