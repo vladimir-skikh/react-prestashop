@@ -8,7 +8,7 @@ const OrderHistoryAPI = ({
 }) => {
     return (
         <OrderHistory 
-            id={order_history.id}
+            id_order_history={order_history.id_order_history}
             employee={order_history.employee}
             state_name={order_history.state_name}
             old_state_name={order_history.old_state_name}

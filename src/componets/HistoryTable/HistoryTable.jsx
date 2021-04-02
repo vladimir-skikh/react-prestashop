@@ -1,22 +1,21 @@
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import OrderHistoryContainer from '../OrderHistory/OrderHistoryContainer';
 import './HistoryTableComplex.css';
 import styles from './HistoryTable.module.css';
 import Pagination from '../common/Pagination/Pagination';
-import { updateOrderHistoriesThunkCreator, setSortThunkCreator } from '../../redux/reducers/indexReducer';
 import Preloader from "../common/Preloader/Preloader";
 
 class HistoryTable extends React.Component {
-
     changeSort = (e) => {
         const filter = e.target.dataset.sortFilter;
         if (!!filter) {
+            const table_name = e.target.dataset.tableName;
             const orderby = e.target.dataset.sortName;
             const orderway = e.target.dataset.sortWay;
 
             const sort = {
+                table_name: table_name,
                 orderby: orderby,
                 orderway: orderway,
             }
@@ -46,8 +45,9 @@ class HistoryTable extends React.Component {
                                         <div 
                                             key={index}
                                             className={classnames(styles.headerCellText)}
+                                            data-table-name={column.table_name}
                                             data-sort-filter={column.filter ? column.filter : false}
-                                            data-sort-name={column.association ? column.association : column.name}
+                                            data-sort-name={column.name}
                                             data-sort-way={this.props.sort.orderby === column.name && this.props.sort.orderway === 'ASC' ? 'DESC' : 'ASC' }
                                             onClick={this.changeSort}
                                         >
@@ -94,20 +94,4 @@ class HistoryTable extends React.Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        table_columns: state.indexReducer.table_columns,
-        order_histories: state.indexReducer.order_histories,
-        current_page: state.indexReducer.current_page,
-        total_pages: state.indexReducer.total_pages,
-        count: state.indexReducer.count,
-        sort: state.indexReducer.sort,
-        isFetching: state.indexReducer.isFetching,
-    }
-}
-const actionCreators = {
-    updateData: updateOrderHistoriesThunkCreator,
-    changeSort: setSortThunkCreator,
-}
-
-export default connect(mapStateToProps, actionCreators)(HistoryTable);
+export default HistoryTable;

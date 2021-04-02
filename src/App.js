@@ -2,7 +2,7 @@ import React from 'react';
 import store from "./redux/reduxStore";
 import  { initializeApp } from './redux/reducers/indexReducer';
 import { connect, Provider } from 'react-redux';
-import HistoryTable from './componets/HistoryTable/HistoryTable';
+import HistoryTableContainer from './componets/HistoryTable/HistoryTableContainer';
 import Preloader from "./componets/common/Preloader/Preloader";
 
 
@@ -15,7 +15,7 @@ class App extends React.Component {
     componentDidMount() {
         const getParams = {
             'limit': this.props.count,
-            'sort': `[${this.props.sort.orderby}_${this.props.sort.orderway}]`,
+            'sort': `[${this.props.sort.table_name}|${this.props.sort.orderby}-${this.props.sort.orderway}]`,
         }        
 
         this.props.initializeApp(getParams, this.props.count);
@@ -32,7 +32,7 @@ class App extends React.Component {
         }
         return (
             <div>
-                <HistoryTable />
+                <HistoryTableContainer />
             </div>
         );
     }

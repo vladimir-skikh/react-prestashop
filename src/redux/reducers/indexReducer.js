@@ -13,42 +13,47 @@ const initialState = {
     initialized: false,
     table_columns: [
         {
-            name: 'id',
+            name: 'id_order_history',
             label: 'ID',
             filter: true,
+            table_name: 'main'
         },
         {
             name: 'id_order',
             label: 'ID заказа',
             filter: true,
+            table_name: 'main'
         },
         {
             name: 'old_state_name',
             label: 'Старый статус',
             filter: false,
+            table_name: 'osl',
         },
         {
             name: 'state_name',
             label: 'Новый статус',
             filter: true,
-            association: 'id_order_state'
+            table_name: 'nothing',
         },
         {
             name: 'comment',
             label: 'Причина изменения',
             filter: true,
             filter_condition: 'like',
+            table_name: 'main'
         },
         {
             name: 'employee',
             label: 'Пользователь',
             filter: true,
-            association: 'id_employee',
+            table_name: 'nothing',
         },
         {
             name: 'date_add',
             label: 'Дата изменения',
             filter: true,
+            table_name: 'main',
         },
     ],
     order_histories: [],
@@ -57,7 +62,8 @@ const initialState = {
     current_page: 1,
     count: 20,
     sort: {
-        orderby: 'id',
+        table_name: 'main',
+        orderby: 'id_order_history',
         orderway: 'DESC'
     },
     isFetching: false,
@@ -137,48 +143,13 @@ export const setSortActionCreator = (sort) => ({type: SET_SORT, sort: sort});
 /** ---------------- */
 
 /** Thunk creators */
-export const setOrdersHistoriesThunkCreator = (getParams) => async (dispatch) => {
+export const setOrdersHistoriesThunkCreator = (getParams, count) => async (dispatch) => {
     let response = await prestashopAPI.getOrdersHistories(getParams);
     if (response.order_histories) {
-        for (let order_history of response.order_histories) {
-
-            // получение данных по работнику
-            let response_employee = await prestashopAPI.getOrderHistoryEmployee(order_history.id_employee);
-            if (response_employee.employees) {
-                order_history['employee'] = `${response_employee.employees[0]['firstname']} ${response_employee.employees[0]['lastname']}`;
-            }
-            else if (response_employee.shops) {
-                order_history['employee'] = response_employee.shops[0]['name'];
-            }
-
-            // получение данных по старому статусу
-            let response_previous_state = await prestashopAPI.getPreviousState(order_history.id_order_state);
-            if (response_previous_state.order_histories) {
-                order_history['id_old_state'] = response_previous_state.order_histories[0]['id_order_state'];
-
-                let response_state_name = await prestashopAPI.getOrderStateName(order_history.id_order_state, order_history['id_old_state']);
-
-                if (response_state_name.order_states) {
-                    for (let state of response_state_name.order_states) {
-                        if (parseInt(state.id) === parseInt(order_history.id_order_state))
-                            order_history['state_name'] = state.name;
-                        else if (parseInt(state.id) === parseInt(order_history['id_old_state']))
-                            order_history['old_state_name'] = state.name;
-                    }
-                }
-            }
-        }
         dispatch(setOrdersHistoriesActionCreator(response.order_histories));
-    }
-}
 
-export const setTotalOrderHistoriesThunkCreator = (count) => async (dispatch) => {
-    let response_total_number = await prestashopAPI.getOrdersHistoriesCount();
-
-    if (response_total_number.order_histories) {
-        dispatch(setTotalOrderHistoriesActionCreator(response_total_number.order_histories.length));
-        
-        const total_pages = Math.ceil(response_total_number.order_histories.length / count);
+        dispatch(setTotalOrderHistoriesActionCreator(response.count));
+        const total_pages = Math.ceil(response.count / count);
         dispatch(setTotalPagesActionCreator(total_pages));
     }
 }
@@ -189,10 +160,10 @@ export const updateOrderHistoriesThunkCreator = (page_num, count, sort) => async
     if (parseInt(page_num) === 1) {
         getParams = {'limit': `${count}`}
     }
-    getParams['sort'] = `${sort.orderby}_${sort.orderway}`;
+    getParams['sort'] = `[${sort.table_name}|${sort.orderby}-${sort.orderway}]`;
     dispatch(setIsFetchingActionCreator(true));
 
-    let updateOrderHistories = dispatch(setOrdersHistoriesThunkCreator(getParams));
+    let updateOrderHistories = dispatch(setOrdersHistoriesThunkCreator(getParams, count));
 
     Promise.all([updateOrderHistories]).then(() => {
         dispatch(setIsFetchingActionCreator(false));
@@ -206,24 +177,22 @@ export const setSortThunkCreator = (sort, page_num, count) => async (dispatch) =
     if (parseInt(page_num) === 1) {
         getParams = {'limit': `${count}`}
     }
-    getParams['sort'] = `${sort.orderby}_${sort.orderway}`;
+    getParams['sort'] = `[${sort.table_name}|${sort.orderby}-${sort.orderway}]`;
     dispatch(setIsFetchingActionCreator(true));
 
-    let updateOrderHistories = dispatch(setOrdersHistoriesThunkCreator(getParams));
+    let updateOrderHistories = dispatch(setOrdersHistoriesThunkCreator(getParams, count));
 
     Promise.all([updateOrderHistories]).then(() => {
         dispatch(setIsFetchingActionCreator(false));
-        dispatch(onChangeCurrentPageActionCreator(page_num));
         dispatch(setSortActionCreator(sort));
     })
 }
 /** ------------- */
 
 export const initializeApp = (getParams = {}, count) => async (dispatch) => {
-    let setOrdersHistories =  dispatch(setOrdersHistoriesThunkCreator(getParams));
-    let setTotalOrderHistories = dispatch(setTotalOrderHistoriesThunkCreator(count));
+    let setOrdersHistories =  dispatch(setOrdersHistoriesThunkCreator(getParams, count, true));
 
-    Promise.all([setOrdersHistories, setTotalOrderHistories]).then(() => {
+    Promise.all([setOrdersHistories]).then(() => {
         dispatch(setInitializedCreator());
     })
 }

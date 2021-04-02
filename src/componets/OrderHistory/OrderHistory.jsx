@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { prestashopAPI } from '../../api/api';
 
 const OrderHistory = ({
-    id,
+    id_order_history,
     employee,
     state_name,
     old_state_name,
@@ -15,16 +15,14 @@ const OrderHistory = ({
     odd_even,
 }) => {
 
-    /* const updateComment = async (e) => {
-        const id_order_history = e.target.dataset.idOrderHistory;
-
-        let response = await prestashopAPI.updateComment(id_order_history);
-    } */
+    const updateComment = async () => {
+        
+    }
 
     return (
         <div className={classnames(odd_even, styles.orderHistoryRow)}>
             <div className={classnames(styles.id, styles.cell)}>
-                {id}
+                {id_order_history}
             </div>
             <div className={classnames(styles.id, styles.cell)}>
                 {id_order}
@@ -35,7 +33,7 @@ const OrderHistory = ({
             <div className={classnames(styles.id, styles.cell)}>
                 {state_name}
             </div>
-            <div className={classnames(styles.id, styles.cell)} onClick={updateComment} data-id-order-history={id}>
+            <div className={classnames(styles.id, styles.cell)} onClick={updateComment} data-id-order-history={id_order_history}>
                 {comment}
             </div>
             <div className={classnames(styles.id, styles.cell)}>
