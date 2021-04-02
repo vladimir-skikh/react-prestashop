@@ -22,7 +22,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build && npm run build:clean",
-    "build:clean": "cd build && move static/js/*.js main.js && move static/css/*.css main.css && del -r static",
+    "build:clean": "cd build && move index.html index.tpl",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "stop": "taskkill -F -IM node.exe"
