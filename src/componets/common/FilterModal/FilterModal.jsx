@@ -8,7 +8,7 @@ import { Modal } from '@consta/uikit/Modal';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from "redux-form";
 import { Input } from '../FormControls/FormControls';
-import { formSubmitThunkCreator, setFiltersThunkCreator } from '../../../redux/reducers/indexReducer';
+import { formSubmitThunkCreator, setFiltersThunkCreator, unsetFiltersThunkCreator } from '../../../redux/reducers/indexReducer';
 
 const FilterModalForm = (props) => {
     const onManualSubmitForm = async () => {
@@ -38,7 +38,7 @@ const FilterModalForm = (props) => {
                                                     wrapperClassName={styles.filterFormWrapper}
                                                     inputClassName={classnames(styles.filterFormInput, styles.filterInputNumber)}
                                                     placeholder="Равен"
-                                                    name={field.name + '||equal'}
+                                                    name={field.name}
                                                 />
                                                 <span className={styles.filterInputDelimeter}>
                                                     Или
@@ -114,6 +114,7 @@ const FilterModal = ({
     isFiltersUsed,
     formSubmit,
     setFilters,
+    unsetFilters,
     sort,
     count
 }) => {
@@ -125,6 +126,7 @@ const FilterModal = ({
         setIsFiltersEmpty(false);
     }
 
+    // TODO перенести логику формирования параметров в thunk'у
     const onSubmit = (form_data) => {
         let form_values = [];
         let getParams = {};
@@ -135,12 +137,12 @@ const FilterModal = ({
                 if (field.name === name_condition_arr[0]) {
                     let get_params_key = `filter[${field.table_name}|${name_condition_arr[0]}]`; 
                     let value = form_data[key];
-                    getParams[get_params_key] = `%[${value}]%`;
 
                     if (name_condition_arr[1] !== undefined) {
                         get_params_key = `filter[${field.table_name}|${name_condition_arr[0]}||${name_condition_arr[1]}]`; 
                         getParams[get_params_key] = `[${value}]`;
                     }
+                    else getParams[get_params_key] = `%[${value}]%`;
 
                     form_values.push(key);
                 }
@@ -155,11 +157,15 @@ const FilterModal = ({
         }
     }
 
+    const onUnsetFilters = () => {
+        unsetFilters(sort, count);
+    }
+
     return (
         <div>
             {
                 isFiltersUsed 
-                ? <img src={SearchIconMinus} alt="" className="searchButton"/>
+                ? <img src={SearchIconMinus} alt="" className="searchButton" onClick={onUnsetFilters}/>
                 : <img src={SearchIcon} alt="" className="searchButton" onClick={() => setIsModalOpen(true)}/>
             }
             <Modal
@@ -200,6 +206,7 @@ const mapStateToProps = (state) => {
 const actionCreators = {
     formSubmit: formSubmitThunkCreator,
     setFilters: setFiltersThunkCreator,
+    unsetFilters: unsetFiltersThunkCreator,
 }
 
 export default connect(mapStateToProps, actionCreators)(FilterModal);

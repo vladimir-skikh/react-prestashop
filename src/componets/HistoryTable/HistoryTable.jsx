@@ -36,7 +36,7 @@ class HistoryTable extends React.Component {
                 <div className={classnames(styles.historyTable)}>
                     <div className={styles.tableTop}>
                         <div className={styles.tableTopLabel}>
-                            История статусов заказов
+                            История статусов заказов: <span className={styles.totalCount}>{this.props.total_order_histories}</span>
                         </div>
                         <div className={styles.tableTopActions}>
                             <FilterModal />

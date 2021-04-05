@@ -32,6 +32,7 @@ export const prestashopAPI = {
 
         if (getParams['filter']) {
             params = {...params, ...getParams['filter']}
+            params['filterModal'] = true;
         }
 
         return instanceModule.get(``, {params: params}).then( response => {

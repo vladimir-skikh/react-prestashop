@@ -18,6 +18,7 @@ class HistoryTableApiContainer extends React.Component {
                 total_pages={this.props.total_pages}
                 count={this.props.count}
                 sort={this.props.sort}
+                total_order_histories={this.props.total_order_histories}
                 isFetching={this.props.isFetching}
                 changeSort={this.onChangeSort}
                 updateData={this.props.updateData}
@@ -34,6 +35,7 @@ const mapStateToProps = (state) => {
         total_pages: state.indexReducer.total_pages,
         count: state.indexReducer.count,
         sort: state.indexReducer.sort,
+        total_order_histories: state.indexReducer.total_order_histories,
         isFetching: state.indexReducer.isFetching,
     }
 }

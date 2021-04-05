@@ -9,7 +9,8 @@ const SET_TOTAL_PAGES = 'react-prestashop/indexReducer/SET-TOTAL-PAGES';
 const ONCHANGE_CURRENT_PAGE = 'react-prestashop/indexReducer/ONCHANGE-CURRENT-PAGE';
 const SET_IF_FETCHING = 'react-prestashop/indexReducer/SET-IS-FETCHING';
 const SET_SORT = 'react-prestashop/indexReducer/SET-SORT';
-const UPDATE_COMMENT = 'react-prestashop/indexReducer/UPDATECOMMENT';
+const UPDATE_COMMENT = 'react-prestashop/indexReducer/UPDATE-COMMENT';
+const IS_FILTERS_USED = 'react-prestashop/indexReducer/IS-FILTERS-USED';
 
 
 const initialState = {
@@ -40,6 +41,8 @@ const initialState = {
             label: 'Новый статус',
             filter: true,
             table_name: 'nothing',
+            filter_table: 'osl',
+            filter_column: 'name',
             type: 'text',
         },
         {
@@ -55,6 +58,8 @@ const initialState = {
             label: 'Пользователь',
             filter: true,
             table_name: 'nothing',
+            filter_table: 'osl',
+            filter_column: 'name',
             type: 'text'
         },
         {
@@ -141,6 +146,13 @@ export const indexReducer = (state = initialState, action) => {
             }
             break; 
         }
+        case IS_FILTERS_USED: {
+            stateCopy = {
+                ...state,
+                isFiltersUsed: action.isFiltersUsed
+            }
+            break; 
+        }
         default:
             stateCopy = {...state};
     }
@@ -158,6 +170,7 @@ export const onChangeCurrentPageActionCreator = (current_page) => ({type: ONCHAN
 export const setIsFetchingActionCreator = (isFetching) => ({type: SET_IF_FETCHING, isFetching: isFetching});
 export const setSortActionCreator = (sort) => ({type: SET_SORT, sort: sort});
 export const updateCommentActionCreator = (id_order_history, comment) => ({type: UPDATE_COMMENT, id_order_history: id_order_history, comment: comment});
+export const setIsFiltersUsed = (isFiltersUsed) => ({type: IS_FILTERS_USED, isFiltersUsed: isFiltersUsed});
 /** ---------------- */
 
 /** Thunk creators */
@@ -229,9 +242,24 @@ export const setFiltersThunkCreator = (getParams, sort, count) => async (dispatc
     Promise.all([updateOrderHistories]).then(() => {
         dispatch(setIsFetchingActionCreator(false));
         dispatch(onChangeCurrentPageActionCreator(1));
+        dispatch(setIsFiltersUsed(true));
     });
-    
-    console.log(getParams);
+}
+
+export const unsetFiltersThunkCreator = (sort, count) => async (dispatch) => {
+    let getParams = {
+        'limit': `${count}`,
+        'sort': `[${sort.table_name}|${sort.orderby}-${sort.orderway}]`
+    }
+    dispatch(setIsFetchingActionCreator(true));
+
+    let updateOrderHistories = dispatch(setOrdersHistoriesThunkCreator(getParams, count));
+
+    Promise.all([updateOrderHistories]).then(() => {
+        dispatch(setIsFetchingActionCreator(false));
+        dispatch(onChangeCurrentPageActionCreator(1));
+        dispatch(setIsFiltersUsed(false));
+    });
 }
 
 // manual submit filter form
