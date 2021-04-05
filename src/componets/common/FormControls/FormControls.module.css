@@ -1,0 +1,80 @@
+.formControl {
+    position: relative;
+}
+.error input,
+.error textarea {
+    box-shadow: 0 0 10px -3px tomato;
+}
+.error:hover > .errorMessageBlock {
+    display: flex;
+}
+.error::after {
+    display: block;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    content: '!';
+    color: #ffffff;
+    text-align: center;
+    font-weight: bold;
+    background-color: tomato;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.error.rightSignError::after {
+    right: 8px;
+}
+.error.leftSignError::after {
+    left: 8px;
+}
+.errorMessageBlock {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 10px;
+    background-color: tomato;
+    width: 150px;
+}
+.errorMessageBlock::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+}
+.errorMessageBlock.right {
+    right: -160px;
+}
+.errorMessageBlock.right::before {
+    left: -7px;
+    border-right-color: tomato;
+    border-left: 0;
+}
+.errorMessageBlock.left {
+    left: -160px;
+}
+.errorMessageBlock.left::before {
+    right: -7px;
+    border-left-color: tomato;
+    border-right: 0;
+}
+.errorMessage {
+    display: block;
+    padding: 10px;
+    color: #fff;
+}
+.summaryFormError {
+    padding: 15px;
+    border: 1px solid tomato;
+    border-radius: 10px;
+    width: 100%;
+    color: tomato;
+    text-align: center;
+}

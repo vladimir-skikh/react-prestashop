@@ -4,7 +4,7 @@ import  { initializeApp } from './redux/reducers/indexReducer';
 import { connect, Provider } from 'react-redux';
 import HistoryTableContainer from './componets/HistoryTable/HistoryTableContainer';
 import Preloader from "./componets/common/Preloader/Preloader";
-
+import { Theme, presetGpnDefault } from '@consta/uikit/Theme';
 
 class App extends React.Component {
 
@@ -31,9 +31,9 @@ class App extends React.Component {
             return <Preloader />;
         }
         return (
-            <div>
+            <Theme preset={presetGpnDefault}>
                 <HistoryTableContainer />
-            </div>
+            </Theme>
         );
     }
 }

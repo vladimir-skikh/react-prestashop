@@ -4,3 +4,6 @@
 .odd {
     background-color: #d6eff8;
 }
+.searchButton:hover {
+    cursor: pointer;
+}

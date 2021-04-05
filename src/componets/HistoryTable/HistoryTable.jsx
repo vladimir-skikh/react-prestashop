@@ -5,6 +5,7 @@ import './HistoryTableComplex.css';
 import styles from './HistoryTable.module.css';
 import Pagination from '../common/Pagination/Pagination';
 import Preloader from "../common/Preloader/Preloader";
+import FilterModal from '../common/FilterModal/FilterModal';
 
 class HistoryTable extends React.Component {
     changeSort = (e) => {
@@ -33,6 +34,14 @@ class HistoryTable extends React.Component {
         return (
             <div>
                 <div className={classnames(styles.historyTable)}>
+                    <div className={styles.tableTop}>
+                        <div className={styles.tableTopLabel}>
+                            История статусов заказов
+                        </div>
+                        <div className={styles.tableTopActions}>
+                            <FilterModal />
+                        </div>
+                    </div>
                     <div className={styles.tableHeader}>
                         {
                             this.props.table_columns.map( (column, index) => {

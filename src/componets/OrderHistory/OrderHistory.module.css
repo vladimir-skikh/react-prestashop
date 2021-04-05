@@ -11,3 +11,15 @@
 .cell:not(.lastCell) {
     border-right: 1px solid #d8d8d8;
 }
+.commentText {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.commentInput {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0 5px;
+    min-height: 25px;
+}

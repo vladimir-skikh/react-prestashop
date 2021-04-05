@@ -15,20 +15,24 @@ import axios from 'axios';
 }); */
 
 const instanceModule = axios.create({
-    withCredentials: true,
+    //withCredentials: true,
     baseURL: 'https://strategshop/module/pworderhistories/orderhistories',
 })
 
 export const prestashopAPI = {
 
     getOrdersHistories: async (getParams = {}) => {
-        const params = {
+        let params = {
             'method': 'getOrderHistories',
             'limit': getParams['limit'] ? getParams['limit'] : 20,
             'display': 'full',
             'sort': getParams['sort'] ? getParams['sort'] : '[main|id_order_history-DESC]',
             'filter[main|id_employee]': `![0]`
         };
+
+        if (getParams['filter']) {
+            params = {...params, ...getParams['filter']}
+        }
 
         return instanceModule.get(``, {params: params}).then( response => {
             return response.data;
@@ -39,7 +43,7 @@ export const prestashopAPI = {
         let postParams = {
             'method': 'updateComment',
             'id_order_history': id_order_history,
-            'commnet': comment,
+            'comment': comment,
         }
         return instanceModule.put(``, postParams).then( response => {
             return response.data;

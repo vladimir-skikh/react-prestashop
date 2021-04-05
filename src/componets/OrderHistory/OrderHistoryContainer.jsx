@@ -1,10 +1,12 @@
 import React from 'react';
 import OrderHistory from './OrderHistory';
 import { connect } from 'react-redux';
+import { updateCommentThunkCreator } from '../../redux/reducers/indexReducer';
 
 const OrderHistoryAPI = ({
     order_history,
-    odd_even
+    odd_even,
+    updateComment
 }) => {
     return (
         <OrderHistory 
@@ -16,6 +18,7 @@ const OrderHistoryAPI = ({
             comment={order_history.comment}
             date_add={order_history.date_add}
             odd_even={odd_even}
+            updateComment={updateComment}
         />
     ); 
 }
@@ -26,6 +29,8 @@ const mapStateToProps = (state, ownProps) => {
         odd_even: ownProps.odd_even,
     }
 }
-const actionCreators = {}
+const actionCreators = {
+    updateComment: updateCommentThunkCreator
+}
 
 export default connect(mapStateToProps, actionCreators)(OrderHistoryAPI);

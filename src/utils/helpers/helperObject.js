@@ -8,5 +8,5 @@ export const updateObjectInArray = (items, itemId, objPropName, newObjProp) => {
             return itemCopy;
         }
         return item;
-    })
+    });
 }
