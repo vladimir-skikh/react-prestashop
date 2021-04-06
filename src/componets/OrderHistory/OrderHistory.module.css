@@ -17,9 +17,24 @@
     height: 100%;
 }
 .commentInput {
-    display: block;
     width: 100%;
     height: 100%;
-    padding: 0 5px;
-    min-height: 25px;
+    padding: 0!important;
+    margin: 0;
+    border: none!important;
+}
+.commentInput > input {
+    display: block;
+    height: 45px;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0;
+    padding: 0 5px !important;
+    font-size: 14px !important;
+}
+.commentInput:hover > input {
+    border: 1px solid #204d74 !important;
+}
+.commentInput > input:focus {
+    border: 1px solid #149AC9 !important;
 }

@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+const domain = 'https://strategshop';
+/**
+ * baseURL задачется через модуль в контролере AdminOrderGistories через Media::addJsDef()
+ */
+
 const instanceModule = axios.create({
-    baseURL: `https://strategshop/module/pworderhistories/orderhistories`,
+    baseURL: `${domain}/module/pworderhistories/orderhistories`,
 })
 
 export const prestashopAPI = {

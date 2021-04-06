@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <name><![CDATA[pworderhistories]]></name>
+  <displayName><![CDATA[История заказов]]></displayName>
+  <version>1</version>
+  <description><![CDATA[Отображает историю изменения статусов заказов]]></description>
+  <author><![CDATA[PrestaWeb.ru]]></author>
+  <author_uri/>
+  <tab><![CDATA[other]]></tab>
+  <confirmUninstall/>
+  <is_configurable>0</is_configurable>
+  <need_instance>0</need_instance>
+  <limited_countries/>
+</module>
