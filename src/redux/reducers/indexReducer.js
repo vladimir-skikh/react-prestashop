@@ -11,6 +11,7 @@ const SET_IF_FETCHING = 'react-prestashop/indexReducer/SET-IS-FETCHING';
 const SET_SORT = 'react-prestashop/indexReducer/SET-SORT';
 const UPDATE_COMMENT = 'react-prestashop/indexReducer/UPDATE-COMMENT';
 const IS_FILTERS_USED = 'react-prestashop/indexReducer/IS-FILTERS-USED';
+const SET_FILTERS = 'react-prestashop/indexReducer/SET-FILTERS';
 
 
 const initialState = {
@@ -58,8 +59,6 @@ const initialState = {
             label: 'Пользователь',
             filter: true,
             table_name: 'nothing',
-            filter_table: 'osl',
-            filter_column: 'name',
             type: 'text'
         },
         {
@@ -81,7 +80,7 @@ const initialState = {
         orderway: 'DESC'
     },
     isFetching: false,
-    filters: [],
+    filters: {},
     isFiltersUsed: false,
 }
 
@@ -153,6 +152,13 @@ export const indexReducer = (state = initialState, action) => {
             }
             break; 
         }
+        case SET_FILTERS: {
+            stateCopy = {
+                ...state,
+                filters: {...action.filters}
+            }
+            break; 
+        }
         default:
             stateCopy = {...state};
     }
@@ -170,7 +176,8 @@ export const onChangeCurrentPageActionCreator = (current_page) => ({type: ONCHAN
 export const setIsFetchingActionCreator = (isFetching) => ({type: SET_IF_FETCHING, isFetching: isFetching});
 export const setSortActionCreator = (sort) => ({type: SET_SORT, sort: sort});
 export const updateCommentActionCreator = (id_order_history, comment) => ({type: UPDATE_COMMENT, id_order_history: id_order_history, comment: comment});
-export const setIsFiltersUsed = (isFiltersUsed) => ({type: IS_FILTERS_USED, isFiltersUsed: isFiltersUsed});
+export const setIsFiltersUsedActionCreator = (isFiltersUsed) => ({type: IS_FILTERS_USED, isFiltersUsed: isFiltersUsed});
+export const setFiltersActionCreator = (filters) => ({type: SET_FILTERS, filters: filters});
 /** ---------------- */
 
 /** Thunk creators */
@@ -183,17 +190,20 @@ export const setOrdersHistoriesThunkCreator = (getParams, count) => async (dispa
         const total_pages = Math.ceil(response.count / count);
         dispatch(setTotalPagesActionCreator(total_pages));
     }
+    else {
+        Promise.reject(response.error_msg);
+    }
 }
 
-export const updateOrderHistoriesThunkCreator = (page_num, count, sort) => async (dispatch) => {
+export const updateOrderHistoriesThunkCreator = (page_num, count, sort, filters, fields) => async (dispatch) => {
     const offset = parseInt((page_num - 1) * count - 1);
-    let getParams = {'limit': `${offset},${count}`}
-    if (parseInt(page_num) === 1) {
-        getParams = {'limit': `${count}`}
+    let getParams = {
+        'sort': `[${sort.table_name}|${sort.orderby}-${sort.orderway}]`,
+        'limit': parseInt(page_num) === 1 ? `${count}` : `${offset},${count}`,
+        'filter': getRequestParamsByFilters(filters, fields),
     }
-    getParams['sort'] = `[${sort.table_name}|${sort.orderby}-${sort.orderway}]`;
-    dispatch(setIsFetchingActionCreator(true));
 
+    dispatch(setIsFetchingActionCreator(true));
     let updateOrderHistories = dispatch(setOrdersHistoriesThunkCreator(getParams, count));
 
     Promise.all([updateOrderHistories]).then(() => {
@@ -202,15 +212,15 @@ export const updateOrderHistoriesThunkCreator = (page_num, count, sort) => async
     })
 }
 
-export const setSortThunkCreator = (sort, page_num, count) => async (dispatch) => {
+export const setSortThunkCreator = (sort, page_num, count, filters, fields) => async (dispatch) => {
     const offset = parseInt((page_num - 1) * count - 1);
-    let getParams = {'limit': `${offset},${count}`}
-    if (parseInt(page_num) === 1) {
-        getParams = {'limit': `${count}`}
+    let getParams = {
+        'sort': `[${sort.table_name}|${sort.orderby}-${sort.orderway}]`,
+        'limit': parseInt(page_num) === 1 ? `${count}` : `${offset},${count}`,
+        'filter': getRequestParamsByFilters(filters, fields),
     }
-    getParams['sort'] = `[${sort.table_name}|${sort.orderby}-${sort.orderway}]`;
+    
     dispatch(setIsFetchingActionCreator(true));
-
     let updateOrderHistories = dispatch(setOrdersHistoriesThunkCreator(getParams, count));
 
     Promise.all([updateOrderHistories]).then(() => {
@@ -230,19 +240,21 @@ export const updateCommentThunkCreator = (id_order_history, comment) => async (d
     }
 }
 
-export const setFiltersThunkCreator = (getParams, sort, count) => async (dispatch) => {
-    let filter = {...getParams};
-    getParams['filter'] = filter;
-    getParams['limit'] = `${count}`;
-    getParams['sort'] = `[${sort.table_name}|${sort.orderby}-${sort.orderway}]`;
-    dispatch(setIsFetchingActionCreator(true));
+export const setFiltersThunkCreator = (form_data, fields, sort, count) => async (dispatch) => {
+    const getParams = {
+        'filter': getRequestParamsByFilters(form_data, fields),
+        'limit': `${count}`,
+        'sort': `[${sort.table_name}|${sort.orderby}-${sort.orderway}]`
+    };
 
+    dispatch(setIsFetchingActionCreator(true));
     let updateOrderHistories = dispatch(setOrdersHistoriesThunkCreator(getParams, count));
 
     Promise.all([updateOrderHistories]).then(() => {
         dispatch(setIsFetchingActionCreator(false));
         dispatch(onChangeCurrentPageActionCreator(1));
-        dispatch(setIsFiltersUsed(true));
+        dispatch(setFiltersActionCreator(form_data));
+        dispatch(setIsFiltersUsedActionCreator(true));
     });
 }
 
@@ -252,13 +264,13 @@ export const unsetFiltersThunkCreator = (sort, count) => async (dispatch) => {
         'sort': `[${sort.table_name}|${sort.orderby}-${sort.orderway}]`
     }
     dispatch(setIsFetchingActionCreator(true));
-
     let updateOrderHistories = dispatch(setOrdersHistoriesThunkCreator(getParams, count));
 
     Promise.all([updateOrderHistories]).then(() => {
         dispatch(setIsFetchingActionCreator(false));
         dispatch(onChangeCurrentPageActionCreator(1));
-        dispatch(setIsFiltersUsed(false));
+        dispatch(setFiltersActionCreator({}));
+        dispatch(setIsFiltersUsedActionCreator(false));
     });
 }
 
@@ -268,7 +280,6 @@ export const formSubmitThunkCreator = () => async (dispatch) => {
     dispatch(action);
 }
 /** ------------- */
-
 export const initializeApp = (getParams = {}, count) => async (dispatch) => {
     let setOrdersHistories =  dispatch(setOrdersHistoriesThunkCreator(getParams, count, true));
 
@@ -278,3 +289,33 @@ export const initializeApp = (getParams = {}, count) => async (dispatch) => {
 }
 
 
+/** Other functions */
+const getRequestParamsByFilters = (form_data, fields) => {
+    let getParams = {};
+    for (let key in form_data) {
+        let name_condition_arr = key.split('||');
+
+        for (let field of fields) {
+            if (field.name === name_condition_arr[0]) {
+                let get_params_key = '';
+                if (field.filter_table !== undefined) 
+                    get_params_key = `filter[${field.filter_table}|${field.filter_column}]`; 
+                else
+                    get_params_key = `filter[${field.table_name}|${name_condition_arr[0]}]`; 
+
+                let value = form_data[key];
+
+                if (name_condition_arr[1] !== undefined) {
+                    if (field.filter_table !== undefined) 
+                        get_params_key = `filter[${field.filter_table}|${field.filter_column}||${name_condition_arr[1]}]`; 
+                    else
+                        get_params_key = `filter[${field.table_name}|${name_condition_arr[0]}||${name_condition_arr[1]}]`; 
+                    getParams[get_params_key] = `[${value}]`;
+                }
+                else getParams[get_params_key] = `%[${value}]%`;
+            }
+        }
+    }
+
+    return Object.keys(getParams).length > 0 ? getParams : false;
+}

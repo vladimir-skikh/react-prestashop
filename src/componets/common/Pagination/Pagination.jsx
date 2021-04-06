@@ -7,7 +7,9 @@ const Pagination = ({
     count,
     currentPage,
     sort,
-    totalPages
+    totalPages,
+    filters,
+    table_columns
 }) => {
 
     let paginationStart = 0;
@@ -18,7 +20,7 @@ const Pagination = ({
     }
 
     let onChangeCurrentPage = (pageNum) => {
-        updateData(pageNum, count, sort);
+        updateData(pageNum, count, sort, filters, table_columns);
     }
 
     let pages = [];

@@ -16,7 +16,7 @@ const FilterModalForm = (props) => {
     }
 
     return(
-        <div className={styles.filterModal}>
+        <form className={styles.filterModal}>
             {
                 props.fields.map( (field, index) => {
                     if (field.filter) {
@@ -101,7 +101,7 @@ const FilterModalForm = (props) => {
                     onClick={onManualSubmitForm}
                 />
             </div>
-        </div>
+        </form>
     );
 }
 
@@ -116,7 +116,8 @@ const FilterModal = ({
     setFilters,
     unsetFilters,
     sort,
-    count
+    count,
+    usedFilters
 }) => {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [isFiltersEmpty, setIsFiltersEmpty] = React.useState(false);
@@ -129,27 +130,16 @@ const FilterModal = ({
     // TODO перенести логику формирования параметров в thunk'у
     const onSubmit = (form_data) => {
         let form_values = [];
-        let getParams = {};
         for (let key in form_data) {
             let name_condition_arr = key.split('||');
-
             for (let field of fields) {
                 if (field.name === name_condition_arr[0]) {
-                    let get_params_key = `filter[${field.table_name}|${name_condition_arr[0]}]`; 
-                    let value = form_data[key];
-
-                    if (name_condition_arr[1] !== undefined) {
-                        get_params_key = `filter[${field.table_name}|${name_condition_arr[0]}||${name_condition_arr[1]}]`; 
-                        getParams[get_params_key] = `[${value}]`;
-                    }
-                    else getParams[get_params_key] = `%[${value}]%`;
-
                     form_values.push(key);
                 }
             }
         }
         if (form_values.length > 0) {
-            setFilters(getParams, sort, count);
+            setFilters(form_data, fields, sort, count);
             closeModal();
         }
         else {
@@ -163,10 +153,11 @@ const FilterModal = ({
 
     return (
         <div>
+            <img src={SearchIcon} alt="" className="searchButton" onClick={() => setIsModalOpen(true)}/>
             {
                 isFiltersUsed 
                 ? <img src={SearchIconMinus} alt="" className="searchButton" onClick={onUnsetFilters}/>
-                : <img src={SearchIcon} alt="" className="searchButton" onClick={() => setIsModalOpen(true)}/>
+                : ''
             }
             <Modal
                 isOpen={isModalOpen}
@@ -187,7 +178,12 @@ const FilterModal = ({
                     <span className={styles.modalClose} onClick={closeModal}>&times;</span>
                 </div>
                 <div className={classnames(styles.modalBody)}>
-                    <FilterModalReduxForm fields={fields} onSubmit={onSubmit} formSubmit={formSubmit}/>
+                    <FilterModalReduxForm 
+                        fields={fields} 
+                        onSubmit={onSubmit} 
+                        formSubmit={formSubmit} 
+                        initialValues={usedFilters}
+                    />
                 </div>
             </Modal>
         </div>
@@ -199,7 +195,8 @@ const mapStateToProps = (state) => {
         isFiltersUsed: state.indexReducer.isFiltersUsed,
         fields: state.indexReducer.table_columns,
         count: state.indexReducer.count,
-        sort: state.indexReducer.sort
+        sort: state.indexReducer.sort,
+        usedFilters: state.indexReducer.filters
     }
 }
 

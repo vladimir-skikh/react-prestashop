@@ -21,7 +21,13 @@ class HistoryTable extends React.Component {
                 orderway: orderway,
             }
 
-            this.props.changeSort(sort, this.props.current_page, this.props.count);
+            this.props.changeSort(
+                sort, 
+                this.props.current_page, 
+                this.props.count, 
+                this.props.filters, 
+                this.props.table_columns
+            );
         }
     }
 
@@ -80,6 +86,7 @@ class HistoryTable extends React.Component {
                         }
                     </div>
                     {
+                        this.props.order_histories.length > 0 ?
                         this.props.order_histories.map( (order_history, index) => {
                             return(
                                 <OrderHistoryContainer 
@@ -88,7 +95,10 @@ class HistoryTable extends React.Component {
                                     odd_even={index % 2 === 0? 'even' : 'odd'} 
                                 />
                             )
-                        })
+                        }) : 
+                        <div className={styles.tableEmptyRow}>
+                            Заказы не найдены
+                        </div>
                     }
                 </div>
                 <Pagination 
@@ -97,6 +107,8 @@ class HistoryTable extends React.Component {
                     currentPage={this.props.current_page}
                     totalPages={this.props.total_pages}
                     sort={this.props.sort}
+                    filters={this.props.filters}
+                    table_columns={this.props.table_columns}
                 />
             </div>
         ); 

@@ -5,14 +5,15 @@ import { updateOrderHistoriesThunkCreator, setSortThunkCreator } from '../../red
 
 class HistoryTableApiContainer extends React.Component {
 
-    onChangeSort = (sort,current_page,count) => {
-        this.props.changeSort(sort, current_page, count);
+    onChangeSort = (sort,current_page,count, filters, table_columns) => {
+        this.props.changeSort(sort, current_page, count, filters, table_columns);
     }
 
     render() {
         return(
             <HistoryTable 
                 table_columns={this.props.table_columns}
+                filters={this.props.filters}
                 order_histories={this.props.order_histories}
                 current_page={this.props.current_page}
                 total_pages={this.props.total_pages}
@@ -37,6 +38,7 @@ const mapStateToProps = (state) => {
         sort: state.indexReducer.sort,
         total_order_histories: state.indexReducer.total_order_histories,
         isFetching: state.indexReducer.isFetching,
+        filters: state.indexReducer.filters
     }
 }
 const actionCreators = {
