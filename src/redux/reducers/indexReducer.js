@@ -296,7 +296,7 @@ const getRequestParamsByFilters = (form_data, fields) => {
         let name_condition_arr = key.split('||');
 
         for (let field of fields) {
-            if (field.name === name_condition_arr[0]) {
+            if (field.name === name_condition_arr[0] && form_data[key] !== '') {
                 let get_params_key = '';
                 if (field.filter_table !== undefined) 
                     get_params_key = `filter[${field.filter_table}|${field.filter_column}]`; 

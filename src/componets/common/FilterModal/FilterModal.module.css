@@ -1,7 +1,7 @@
 .modalWindow {
     display: flex;
     flex-direction: column;
-    width: 80%;
+    width: 50%;
 }
 .modalHeader {
     padding: 15px;

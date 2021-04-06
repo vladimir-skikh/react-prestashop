@@ -1,8 +1,7 @@
 import React from 'react';
 import style from './FormControls.module.css';
 
-/** используется деструктуризация (rest оператор) */
-const FromControl= ({
+const FromControl = ({
     children, 
     formControlProps
 }) => {
@@ -26,7 +25,6 @@ export const Textarea = (props) => {
 
     return <FromControl 
         {...props} 
-        input={input}
         formControlProps={formControlProps}
     > 
         <textarea {...input} {...restProps} className={formControlProps.inputClassName}/> 
@@ -42,7 +40,6 @@ export const Input = (props) => {
     }
 
     return <FromControl 
-        input={input}
         formControlProps={formControlProps}
     > 
         <input {...input} {...restProps} className={formControlProps.inputClassName}/> 

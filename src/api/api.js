@@ -1,22 +1,7 @@
 import axios from 'axios';
 
-/**
- * prestashop web service API key
- */ 
-//const api_key = 'LCVMKBTLRB8XP7NKT4C4QMP361IWKR8X';
-
-/* const instance = axios.create({
-    withCredentials: true,
-    baseURL: 'https://strategshop/api/',
-    params: {
-        ws_key: api_key,
-        io_format: 'JSON',
-    },
-}); */
-
 const instanceModule = axios.create({
-    //withCredentials: true,
-    baseURL: 'https://strategshop/module/pworderhistories/orderhistories',
+    baseURL: `https://strategshop/module/pworderhistories/orderhistories`,
 })
 
 export const prestashopAPI = {

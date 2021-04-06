@@ -1,5 +1,5 @@
 import React from 'react';
-import classnames from 'classnames';
+import * as classnames from 'classnames';
 import styles from './FilterModal.module.css';
 import SearchIcon from "../../../img/search-icon.svg";
 import SearchIconMinus from "../../../img/search-icon-minus.svg";
@@ -38,7 +38,7 @@ const FilterModalForm = (props) => {
                                                     wrapperClassName={styles.filterFormWrapper}
                                                     inputClassName={classnames(styles.filterFormInput, styles.filterInputNumber)}
                                                     placeholder="Равен"
-                                                    name={field.name}
+                                                    name={field.name + '||equal'}
                                                 />
                                                 <span className={styles.filterInputDelimeter}>
                                                     Или
@@ -127,7 +127,6 @@ const FilterModal = ({
         setIsFiltersEmpty(false);
     }
 
-    // TODO перенести логику формирования параметров в thunk'у
     const onSubmit = (form_data) => {
         let form_values = [];
         for (let key in form_data) {
