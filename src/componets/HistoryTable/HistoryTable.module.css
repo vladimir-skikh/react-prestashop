@@ -27,7 +27,7 @@
     justify-content: space-between;
     width: 100%;
 }
-.headerCellText:hover {
+.headerCellText:not(.disable):hover {
     cursor: pointer;
 }
 .headerCell:not(.lastCell) {

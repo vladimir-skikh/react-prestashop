@@ -24,8 +24,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "npm run writeLiteralStart && react-scripts build && npm run writeLiteralEnd && npm run renameFile",
-    "renameFile": "cd build && move index.html index.tpl",
+    "build": "npm run copyIndexFile && npm run writeLiteralStart && react-scripts build && npm run writeLiteralEnd && npm run renameIndexFile && npm run restoreIndexFile",
+    "renameIndexFile": "cd build && move index.html index.tpl && cd ..",
+    "copyIndexFile": "cd public && copy index.html index-copy.html && cd ..",
+    "restoreIndexFile": "cd public && move index-copy.html index.html  && cd ../build && del index-copy.html",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "stop": "taskkill -F -IM node.exe",

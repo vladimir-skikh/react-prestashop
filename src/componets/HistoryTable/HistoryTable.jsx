@@ -10,7 +10,8 @@ import FilterModal from '../common/FilterModal/FilterModal';
 class HistoryTable extends React.Component {
     changeSort = (e) => {
         const filter = e.target.dataset.sortFilter;
-        if (!!filter) {
+        console.log(filter);
+        if (filter !== 'false') {
             const table_name = e.target.dataset.tableName;
             const orderby = e.target.dataset.sortName;
             const orderway = e.target.dataset.sortWay;
@@ -55,11 +56,11 @@ class HistoryTable extends React.Component {
                                     <div className={classnames(
                                         styles.headerCell, 
                                         {[styles.headerCellActive]: this.props.sort.orderby === column.name}, 
-                                        {[styles.lastCell]: this.props.table_columns.length - 1 === index}
+                                        {[styles.lastCell]: this.props.table_columns.length - 1 === index},
                                     )}>
                                         <div 
                                             key={index}
-                                            className={classnames(styles.headerCellText)}
+                                            className={classnames(styles.headerCellText, {[styles.disable]: !column.filter})}
                                             data-table-name={column.table_name}
                                             data-sort-filter={column.filter ? column.filter : false}
                                             data-sort-name={column.name}

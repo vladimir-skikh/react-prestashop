@@ -145,7 +145,7 @@ class PwOrderHistoriesOrderhistoriesModuleFrontController extends ModuleFrontCon
         }
 
         if ($sql_count === '') {
-            $sql_count = 'SELECT * FROM `'._DB_PREFIX_.'order_history`';
+            $sql_count = 'SELECT * FROM `'._DB_PREFIX_.'order_history` WHERE id_emploee != 0';
         }
         
         $count = Db::getInstance()->executeS($sql_count);
